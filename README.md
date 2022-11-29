@@ -8,8 +8,8 @@ This is a Teams tab dashboard app that uses the [Fluent UI](https://react.fluent
 
 This app also supported teams different themes, including dark theme and high contrast theme.
 
-|           Dark theme           |     High contrast theme      |
-| :----------------------------: | :--------------------------: |
+|              Dark theme              |        High contrast theme         |
+| :----------------------------------: | :--------------------------------: |
 | ![](/tabs/public/dashboard-dark.png) | ![](/tabs/public/dashboard-hc.png) |
 
 ## Prerequisites
@@ -41,48 +41,38 @@ The following files provide the business logic for the dashboard tab. These file
 
 | File                                       | Contents                                          |
 | ------------------------------------------ | ------------------------------------------------- |
-| `src/models/listModel.tsx`                 | Data model for the list widget                    |
-| `src/services/listService.tsx`             | A data retrive implementation for the list widget |
-| `src/views/dashboards/SampleDashboard.tsx` | A sample dashboard layout implementation          |
-| `src/views/lib/Dashboard.styles.ts`        | The dashbaord style file                          |
-| `src/views/lib/Dashboard.tsx`              | An base class that defines the dashboard          |
-| `src/views/lib/Widget.styles.ts`           | The widgt style file                              |
-| `src/views/lib/Widget.tsx`                 | An abstract class that defines the widget         |
-| `src/views/styles/ListWidget.styles.ts`    | The list widget style file                        |
-| `src/views/widgets/ChartWidget.tsx`        | A widget implementation that can display a chart  |
-| `src/views/widgets/ListWidget.tsx`         | A widget implementation that can display a list   |
+| `src/data/listData.json`                   | Data for the list widget                          |
+| `src/services/listService.js`              | A data retrive implementation for the list widget |
+| `src/views/dashboards/SampleDashboard.jsx` | A sample dashboard layout implementation          |
+| `src/views/lib/Dashboard.styles.js`        | The dashbaord style file                          |
+| `src/views/lib/Dashboard.jsx`              | An base class that defines the dashboard          |
+| `src/views/lib/Widget.styles.js`           | The widgt style file                              |
+| `src/views/lib/Widget.jsx`                 | An abstract class that defines the widget         |
+| `src/views/styles/ChartWidget.styles.js`   | The chart widget style file                       |
+| `src/views/styles/ListWidget.styles.js`    | The list widget style file                        |
+| `src/views/widgets/ChartWidget.jsx`        | A widget implementation that can display a chart  |
+| `src/views/widgets/ListWidget.jsx`         | A widget implementation that can display a list   |
 
 The following files are project-related files. You generally will not need to customize these files.
 
 | File                               | Contents                                         |
 | ---------------------------------- | ------------------------------------------------ |
-| `src/index.tsx`                    | Application entry point                          |
-| `src/App.tsx`                      | Application route                                |
-| `src/internal/addNewScopes.ts`     | Implementation of new scopes add                 |
-| `src/internal/context.ts`          | TeamsFx Context                                  |
-| `src/internal/login.ts`            | Implementation of login                          |
-| `src/internal/singletonContext.ts` | Implementation of the TeamsFx instance singleton |
+| `src/index.jsx`                    | Application entry point                          |
+| `src/App.jsx`                      | Application route                                |
+| `src/internal/addNewScopes.js`     | Implementation of new scopes add                 |
+| `src/internal/Context.jsx`         | TeamsFx Context                                  |
+| `src/internal/login.js`            | Implementation of login                          |
+| `src/internal/singletonContext.js` | Implementation of the TeamsFx instance singleton |
 
 ## How to add a new widget
 
 You can use the following steps to add a new widget to the dashboard:
 
-1. [Step 1: Define a data model](#step-1-define-a-data-model)
-2. [Step 2: Create a data retrive service](#step-2-create-a-data-retrive-service)
-3. [Step 3: Create a widget file](#step-3-create-a-widget-file)
-4. [Step 4: Add the widget to the dashboard](#step-4-add-the-widget-to-the-dashboard)
+1. [Step 1: Create a data retrive service](#step-1-create-a-data-retrive-service)
+2. [Step 2: Create a widget file](#step-2-create-a-widget-file)
+3. [Step 3: Add the widget to the dashboard](#step-3-add-the-widget-to-the-dashboard)
 
-### Step 1: Define a data model
-
-Define a data model based on the business scenario, and put it in `tabs/src/models` folder. The widget model defined according to the data you want to display in the widget. Here's a sample data model:
-
-```typescript
-export interface SampleModel {
-  content: string;
-}
-```
-
-### Step 2: Create a data retrive service
+### Step 1: Create a data retrive service
 
 Simplely, you can create a service that returns dummy data. We recommend that you put data files in the `tabs/src/data` folder, and put data retrive services in the `tabs/src/services` folder.
 
@@ -96,18 +86,17 @@ Here's a sample json file that contains dummy data:
 
 Here's a dummy data retrive service:
 
-```typescript
-import { SampleModel } from "../models/sampleModel";
+```javascript
 import SampleData from "../data/SampleData.json";
 
-export const getSampleData = (): SampleModel => SampleData;
+export const getSampleData = () => SampleData;
 ```
 
 > Note: You can also implement a service to retrieve data from the backend service or from the Microsoft Graph API.
 
-### Step 3: Create a widget file
+### Step 2: Create a widget file
 
-Create a widget file in `tabs/src/views/widgets` folder. Extend the [`Widget`](tabs/src/views/lib/Widget.tsx) class. The following table lists the methods that you can override to customize your widget.
+Create a widget file in `tabs/src/views/widgets` folder. Extend the [`Widget`](tabs/src/views/lib/Widget.jsx) class. The following table lists the methods that you can override to customize your widget.
 
 | Methods           | Function                                                                                                                                      |
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -120,26 +109,26 @@ Create a widget file in `tabs/src/views/widgets` folder. Extend the [`Widget`](t
 
 Here's a sample widget implementation:
 
-```tsx
+```javascript
 import { Button, Text } from "@fluentui/react-components";
 import { Widget } from "../lib/Widget";
 import { SampleModel } from "../../models/sampleModel";
 import { getSampleData } from "../../services/sampleService";
 
-export class SampleWidget extends Widget<SampleModel> {
-  async getData(): Promise<SampleModel> {
+export class SampleWidget extends Widget {
+  async getData() {
     return getSampleData();
   }
 
-  headerContent(): JSX.Element | undefined {
+  headerContent() {
     return <Text>Sample Widget</Text>;
   }
 
-  bodyContent(): JSX.Element | undefined {
+  bodyContent() {
     return <div>{this.state.data?.content}</div>;
   }
 
-  footerContent(): JSX.Element | undefined {
+  footerContent() {
     return (
       <Button
         appearance="primary"
@@ -154,13 +143,13 @@ export class SampleWidget extends Widget<SampleModel> {
 }
 ```
 
-### Step 4: Add the widget to the dashboard
+### Step 3: Add the widget to the dashboard
 
-1. Go to `tabs/src/views/dashboards/SampleDashboard.tsx`, if you want create a new dashboard, please refer to [How to add a new dashboard](#how-to-add-a-new-dashboard).
+1. Go to `tabs/src/views/dashboards/SampleDashboard.jsx`, if you want create a new dashboard, please refer to [How to add a new dashboard](#how-to-add-a-new-dashboard).
 2. Update your `dashboardLayout()` method to add the widget to the dashboard:
 
-```tsx
-protected dashboardLayout(): void | JSX.Element {
+```javascript
+dashboardLayout() {
   return (
     <>
       <ListWidget />
@@ -171,10 +160,10 @@ protected dashboardLayout(): void | JSX.Element {
 }
 ```
 
-> Note: If you want put your widget in a column, you can use the [`oneColumn()`](tabs/src/views/lib/Dashboard.styles.ts#L32) method to define the column layout. Here is an example:
+> Note: If you want put your widget in a column, you can use the [`oneColumn()`](tabs/src/views/lib/Dashboard.styles.js#L32) method to define the column layout. Here is an example:
 
-```tsx
-protected dashboardLayout(): void | JSX.Element {
+```javascript
+dashboardLayout() {
   return (
     <>
       <ListWidget />
@@ -198,9 +187,9 @@ You can use the following steps to add a new dashboard layout:
 
 ### Step 1: Create a dashboard class
 
-Create a file with the extension `.tsx` for your dashboard in the `tabs/src/views/dashboards` directory. For example, `YourDashboard.tsx`. Then, create a class that extends the [Dashboard](tabs/src/views/lib/Dashboard.tsx) class.
+Create a file with the extension `.jsx` for your dashboard in the `tabs/src/views/dashboards` directory. For example, `YourDashboard.jsx`. Then, create a class that extends the [Dashboard](tabs/src/views/lib/Dashboard.jsx) class.
 
-```tsx
+```javascript
 export default class YourDashboard extends Dashboard {}
 ```
 
@@ -216,17 +205,17 @@ Dashboard class provides some methods that you can override to customize the das
 
 Here is an example to customize the dashboard layout.
 
-```tsx
+```javascript
 export default class YourDashboard extends Dashboard {
-  protected rowHeights(): string | undefined {
+  rowHeights() {
     return "500px";
   }
 
-  protected columnWidths(): string | undefined {
+  columnWidths() {
     return "4fr 6fr";
   }
 
-  protected dashboardLayout(): void | JSX.Element {
+  dashboardLayout() {
     return (
       <>
         <SampleWidget />
@@ -244,9 +233,9 @@ export default class YourDashboard extends Dashboard {
 
 ### Step 3: Add a route for the new dashboard
 
-Open the `tabs/src/App.tsx` file, and add a route for the new dashboard. Here is an example:
+Open the `tabs/src/App.jsx` file, and add a route for the new dashboard. Here is an example:
 
-```tsx
+```javascript
 import YourDashboard from "./views/dashboards/YourDashboard";
 
 export default function App() {
@@ -262,8 +251,8 @@ Open the [`templates/appPackage/manifest.template.json`](templates/appPackage/ma
 
 ```json
 {
-  "name": "Your Dashboard",
-  "entityId": "yourdashboard",
+  "entityId": "index",
+  "name": "Your Dashboard",  
   "contentUrl": "{{state.fx-resource-frontend-hosting.endpoint}}{{state.fx-resource-frontend-hosting.indexPath}}/yourdashboard",
   "websiteUrl": "{{state.fx-resource-frontend-hosting.endpoint}}{{state.fx-resource-frontend-hosting.indexPath}}/yourdashboard",
   "scopes": ["personal"]
@@ -301,7 +290,7 @@ If you want to call a Graph API from the front-end tab, you can refer to the fol
 
 #### Step 1: Consent delegated permissions first
 
-You can call [`addNewScope(scopes: string[])`](/tabs/src/internal/addNewScopes.ts) to consent the scopes of permissions you want to add. And the consented status will be preserved in a global context [`FxContext`](/tabs/src/internal/singletonContext.ts).
+You can call [`addNewScope(scopes: string[])`](/tabs/src/internal/addNewScopes.js) to consent the scopes of permissions you want to add. And the consented status will be preserved in a global context [`FxContext`](/tabs/src/internal/singletonContext.js).
 
 You can refer to [the Graph API V1.0](https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0) to get the `scope name of the permission` related to the Graph API you want to call.
 
